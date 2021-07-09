@@ -1,12 +1,22 @@
-{ pkgs ? import <nixpkgs> {  } }:
+#{ pkgs ? import <nixpkgs> {  } }:
 
-pkgs.mkShell
-{ name = "CShell1";
+let
+  sources = import ./sources.nix;
+  pkgs = import sources.nixpkgs {};
+  customGhc = pkgs.haskell.packages.ghc865.ghcWithPackages (p: [
+    p.process
+    p.random
+  ]);
+in pkgs.mkShell
+{ name = "cshell1";
   buildInputs = with pkgs; [
     figlet
     hello
-    # neovim and more for when you're more advanced
+    customGhc
+    cowsay
+    neovim
   ];
+  PORT = 2500;
 
   shellHook = ''
     echo "hello, nix department?"
